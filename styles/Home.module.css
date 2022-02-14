@@ -68,6 +68,7 @@
   left: 50%;
   transform: translate(-50%, -50%);
   min-height: 30%;
+  max-height: 70%;
   width: 90%;
   border: solid;
   border-radius: 1rem;
@@ -85,12 +86,37 @@
   background-position: 34px 0, 34px 0, 0 0, 0 0;
   background-size: 68px 68px;
   background-repeat: repeat;
+  overflow: scroll;
+}
+
+.lineDisplay {
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.construCard {
+  width: 40%;
+  border: solid;
+  border-radius: 1rem;
+  padding: 1rem;
+  min-height: 13rem;
+  margin-top: 1rem;
+}
+
+.construRow {
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+}
+
+.lineText {
+  font-size: 15px;
 }
 
 .inputLine {
+  width: 100%;
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  margin-bottom: 1rem;
+  margin-top: 1rem;
 }

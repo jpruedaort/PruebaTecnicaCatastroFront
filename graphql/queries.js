@@ -2,13 +2,14 @@ import { gql } from "@apollo/client";
 
 export const ALL_PREDIO = gql`
   query MyQuery {
-    allPredios {
+    allPredios(condition: {}) {
       nodes {
-        avaluoPredio
-        departPredio
-        idPredio
-        municipioPredio
-        nombrePredio
+        nombre
+        nodeId
+        municipio
+        id
+        departamento
+        avaluo
       }
     }
   }
@@ -17,7 +18,7 @@ export const ALL_PREDIO = gql`
 export const ADD_PREDIO = gql`
   mutation MyMutation(
     $idPredio: Int!
-    $avaluoPredio: Float!
+    $avaluoPredio: Int!
     $nombrePredio: String!
     $departPredio: String!
     $municipioPredio: String!
@@ -25,11 +26,11 @@ export const ADD_PREDIO = gql`
     createPredio(
       input: {
         predio: {
-          nombrePredio: $nombrePredio
-          departPredio: $departPredio
-          municipioPredio: $municipioPredio
-          avaluoPredio: $avaluoPredio
-          idPredio: $idPredio
+          nombre: $nombrePredio
+          departamento: $departPredio
+          municipio: $municipioPredio
+          avaluo: $avaluoPredio
+          id: $idPredio
         }
       }
     ) {
@@ -40,14 +41,111 @@ export const ADD_PREDIO = gql`
 
 export const DELETE_PREDIO = gql`
   mutation MyMutation($id: Int!) {
-    deletePredioByIdPredio(input: { idPredio: $id }) {
-      predio {
-        departPredio
-        idPredio
-        municipioPredio
-        nodeId
-        nombrePredio
+    deletePredioById(input: { id: $id }) {
+      clientMutationId
+      deletedPredioId
+    }
+  }
+`;
+
+export const FIND_PREDIO = gql`
+  query MyQuery($idPred: Int!) {
+    predioById(id: $idPred) {
+      id
+      municipio
+      departamento
+      avaluo
+      nombre
+    }
+  }
+`;
+
+export const EDIT_PREDIO = gql`
+  mutation MyMutation(
+    $id: Int!
+    $avaluo: Int!
+    $departamento: String!
+    $municipio: String!
+    $nombre: String!
+  ) {
+    updatePredioById(
+      input: {
+        predioPatch: {
+          avaluo: $avaluo
+          departamento: $departamento
+          municipio: $municipio
+          nombre: $nombre
+        }
+        id: $id
       }
+    ) {
+      clientMutationId
+      predio {
+        avaluo
+        departamento
+        id
+        municipio
+        nombre
+      }
+    }
+  }
+`;
+
+export const ALL_TERRENO = gql`
+  query MyQuery($predioid: Int!) {
+    allTerrenos(condition: { predioId: $predioid }) {
+      nodes {
+        aguacerca
+        areac
+        construido
+        id
+        predioId
+        regimen
+        valor
+      }
+    }
+  }
+`;
+
+export const ALL_CONSTRU = gql`
+  query MyQuery($idconstru: Int!) {
+    predioById(id: $idconstru) {
+      construccionsByPredioId {
+        nodes {
+          areac
+          dir
+          id
+          pisos
+          predioId
+          tipo
+        }
+      }
+    }
+  }
+`;
+
+export const ADD_CONSTRU = gql`
+  mutation MyMutation(
+    $idConstru: Int!
+    $pisosConstru: Int!
+    $areaConstru: Int!
+    $dirConstru: String!
+    $predioID: Int!
+    $tipoConstru: String!
+  ) {
+    createConstruccion(
+      input: {
+        construccion: {
+          areac: $areaConstru
+          dir: $dirConstru
+          predioId: $predioID
+          pisos: $pisosConstru
+          tipo: $tipoConstru
+          id: $idConstru
+        }
+      }
+    ) {
+      clientMutationId
     }
   }
 `;

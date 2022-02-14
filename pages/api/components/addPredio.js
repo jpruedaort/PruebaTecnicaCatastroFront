@@ -1,6 +1,7 @@
 import { useMutation } from "@apollo/client";
 import styles from "../../../styles/Home.module.css";
 import { ADD_PREDIO } from "../../../graphql/queries";
+import { ALL_PREDIO } from "../../../graphql/queries";
 import { useDispatch } from "react-redux";
 import { tooglePredio } from "../../../redux/slices/stateSlice";
 import { useState } from "react";
@@ -30,7 +31,14 @@ const AddPredio = () => {
         departPredio: departPredio,
         municipioPredio: municipioPredio,
       },
+      refetchQueries: [{ query: ALL_PREDIO }],
     });
+    dispatch(tooglePredio());
+    if (!error) {
+      window.alert("Predio Agregado Exitosamente");
+    } else {
+      window.alert("Error Agregando Predio, intente de nuevo");
+    }
   };
 
   return (
