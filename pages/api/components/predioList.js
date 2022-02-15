@@ -5,7 +5,9 @@ import { useMutation } from "@apollo/client";
 import { useDispatch, useSelector } from "react-redux";
 import { toogleEditar } from "../../../redux/slices/stateSlice";
 import { changeVal } from "../../../redux/slices/predioValSlice";
+import { changeValTerreno } from "../../../redux/slices/construccionValSlice";
 import { toogleViewConstruccion } from "../../../redux/slices/stateSlice";
+import { toogleViewTerreno } from "../../../redux/slices/stateSlice";
 
 const PredioList = () => {
   //Dispatch Redux
@@ -51,6 +53,12 @@ const PredioList = () => {
     dispatch(toogleViewConstruccion());
   };
 
+  //Abrir ventana de terreno
+  const openTerreno = (e) => {
+    dispatch(changeValTerreno(e.target.id));
+    dispatch(toogleViewTerreno());
+  };
+
   if (loading) {
     return <h1>Loading</h1>;
   }
@@ -85,7 +93,13 @@ const PredioList = () => {
             </div>
             <div className={`col-4  d-flex flex-column justify-content-around`}>
               <div className={`btn ${styles.featurebutton}`}>Propietarios</div>
-              <div className={`btn ${styles.featurebutton}`}>Terrenos</div>
+              <div
+                id={predio.id}
+                onClick={(e) => openTerreno(e)}
+                className={`btn ${styles.featurebutton}`}
+              >
+                Terrenos
+              </div>
               <div
                 id={predio.id}
                 onClick={(e) => openConstruccion(e)}

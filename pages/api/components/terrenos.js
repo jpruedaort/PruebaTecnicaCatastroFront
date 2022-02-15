@@ -16,7 +16,7 @@ import {
 } from "../../../redux/slices/stateSlice";
 import AddConstru from "./addConstru";
 
-const Construccion = () => {
+const Terreno = () => {
   //dispatch
   const dispatch = useDispatch();
 
@@ -41,11 +41,11 @@ const Construccion = () => {
   );
 
   //Invocar Valores iniciales para la edicion
-  const valoresEdit = useSelector((state) => state.predioVal);
+  const valoresEdit = useSelector((state) => state.construccionValv);
 
   //Genera los resultados del query de busqueda de predio por ID
-
-  const valorInt = parseInt(valoresEdit.idPredio);
+  console.log("Valores Edit", valoresEdit);
+  const valorInt = parseInt(valoresEdit.idTerreno);
   const [eliminarConstruMutation, { dataElim, errorElim, loadingElim }] =
     useMutation(DELETE_CONSTRU);
 
@@ -164,4 +164,4 @@ const Construccion = () => {
   );
 };
 
-export default Construccion;
+export default Terreno;

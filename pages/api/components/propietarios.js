@@ -16,7 +16,7 @@ import {
 } from "../../../redux/slices/stateSlice";
 import AddConstru from "./addConstru";
 
-const Construccion = () => {
+const Terreno = () => {
   //dispatch
   const dispatch = useDispatch();
 
@@ -30,22 +30,22 @@ const Construccion = () => {
     dispatch(toogleEditarConstruccion());
   };
 
-  //Traer estado para ventana de crear construccion
+  //Traer estado para ventana de crear Propietario
   const addConstruState = useSelector(
     (state) => state.stateELE.createConstruccion
   );
 
-  //traer estado para ventana de edicion de construccion
+  //traer estado para ventana de edicion de Propietario
   const editConstState = useSelector(
     (state) => state.stateELE.editarConstruccion
   );
 
   //Invocar Valores iniciales para la edicion
-  const valoresEdit = useSelector((state) => state.predioVal);
+  const valoresEdit = useSelector((state) => state.construccionValv);
 
   //Genera los resultados del query de busqueda de predio por ID
-
-  const valorInt = parseInt(valoresEdit.idPredio);
+  console.log("Valores Edit", valoresEdit);
+  const valorInt = parseInt(valoresEdit.idTerreno);
   const [eliminarConstruMutation, { dataElim, errorElim, loadingElim }] =
     useMutation(DELETE_CONSTRU);
 
@@ -75,9 +75,8 @@ const Construccion = () => {
     console.log("Error en la solicitud");
   }
 
-  //On Click event para agregar construccion
+  //On Click event para agregar Propietario
 
-  console.log("DATTATAA:, ", data.predioById.construccionsByPredioId.nodes);
   const wholedata = data.predioById.construccionsByPredioId.nodes;
 
   return (
@@ -164,4 +163,4 @@ const Construccion = () => {
   );
 };
 
-export default Construccion;
+export default Terreno;

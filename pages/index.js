@@ -7,6 +7,7 @@ import EditarPredio from "./api/components/editarPredio";
 import { useDispatch, useSelector } from "react-redux";
 import { tooglePredio } from "../redux/slices/stateSlice";
 import Construccion from "../pages/api/components/construcciones";
+import Terrenos from "./api/components/terrenos";
 
 export default function Home() {
   //Dispatch
@@ -17,6 +18,7 @@ export default function Home() {
   const editState = useSelector((state) => state.stateELE.editarTerreno);
   const propState = useSelector((state) => state.stateELE.createPropietario);
   const constState = useSelector((state) => state.stateELE.viewConstruccion);
+  const terrState = useSelector((state) => state.stateELE.viewTerreno);
 
   //Onclick event donde aparece la ventana de Agregar predio
   const newReport = (e) => {
@@ -47,6 +49,7 @@ export default function Home() {
         <ClientOnly>
           <PredioList />
         </ClientOnly>
+        {terrState && <Terrenos />}
         {constState && <Construccion />}
         {predState && <AddPredio />}
         {editState && <EditarPredio />}

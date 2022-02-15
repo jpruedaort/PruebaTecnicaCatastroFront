@@ -6,7 +6,9 @@ const initialState = {
   createConstruccion: false,
   createPropietario: false,
   editarTerreno: false,
+  editarConstruccion: false,
   viewConstruccion: false,
+  viewTerreno: false,
 };
 
 export const allStatesSlice = createSlice({
@@ -31,6 +33,12 @@ export const allStatesSlice = createSlice({
     toogleViewConstruccion: (state) => {
       state.viewConstruccion = !state.viewConstruccion;
     },
+    toogleEditarConstruccion: (state) => {
+      state.editarConstruccion = !state.editarConstruccion;
+    },
+    toogleViewTerreno: (state) => {
+      state.viewTerreno = !state.viewTerreno;
+    },
   },
 });
 
@@ -41,6 +49,8 @@ export const {
   tooglePropietario,
   toogleEditar,
   toogleViewConstruccion,
+  toogleEditarConstruccion,
+  toogleViewTerreno,
 } = allStatesSlice.actions;
 
 export default allStatesSlice.reducer;

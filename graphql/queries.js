@@ -49,13 +49,15 @@ export const DELETE_PREDIO = gql`
 `;
 
 export const FIND_PREDIO = gql`
-  query MyQuery($idPred: Int!) {
-    predioById(id: $idPred) {
+  query MyQuery($idConstru: Int!) {
+    construccionById(id: $idConstru) {
+      areac
+      dir
       id
-      municipio
-      departamento
-      avaluo
-      nombre
+      nodeId
+      pisos
+      predioId
+      tipo
     }
   }
 `;
@@ -143,6 +145,51 @@ export const ADD_CONSTRU = gql`
           tipo: $tipoConstru
           id: $idConstru
         }
+      }
+    ) {
+      clientMutationId
+    }
+  }
+`;
+
+export const DELETE_CONSTRU = gql`
+  mutation MyMutation($id: Int!) {
+    deleteConstruccionById(input: { id: $id }) {
+      clientMutationId
+      deletedConstruccionId
+    }
+  }
+`;
+
+export const FIND_CONSTRU = gql`
+  query MyQuery($id: Int!) {
+    construccionById(id: $id) {
+      areac
+      dir
+      id
+      pisos
+      tipo
+    }
+  }
+`;
+
+export const EDIT_CONSTRU = gql`
+  mutation MyMutation(
+    $idconstru: Int!
+    $area: Int!
+    $dir: String!
+    $pisos: Int!
+    $tipo: String!
+  ) {
+    updateConstruccionById(
+      input: {
+        construccionPatch: {
+          areac: $area
+          dir: $dir
+          pisos: $pisos
+          tipo: $tipo
+        }
+        id: $idconstru
       }
     ) {
       clientMutationId
