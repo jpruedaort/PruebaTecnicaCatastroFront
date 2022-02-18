@@ -1,44 +1,52 @@
 import { useQuery } from "@apollo/client";
 import styles from "../../../styles/Home.module.css";
-import { FIND_PREDIO } from "../../../graphql/queries";
+import {
+  ALL_TERRENO,
+  EDIT_TERRENO,
+  FIND_TERRENO,
+} from "../../../graphql/queries";
 import { useDispatch, useSelector } from "react-redux";
 import { ALL_PREDIO } from "../../../graphql/queries";
-import { toogleEditar } from "../../../redux/slices/stateSlice";
 import { useEffect, useState } from "react";
 import { useMutation } from "@apollo/client";
-import { EDIT_PREDIO } from "../../../graphql/queries";
-import { toogleEditarConstruccion } from "../../../redux/slices/stateSlice";
+import {
+  toogleEditarConstruccion,
+  toogleEditarTerreno,
+} from "../../../redux/slices/stateSlice";
 import { EDIT_CONSTRU } from "../../../graphql/queries";
 
-const EditarConstruccion = () => {
-  //dispatch
+const EditarTerreno = () => {
+  //dispatch(Redux)
   const dispatch = useDispatch();
 
   //Invocar Valores iniciales para la edicion
-  const valoresEdit = useSelector((state) => state.construccionVal);
+  const valoresEdit = useSelector((state) => state.predioVal);
 
   //Estados de la Construccion
-  const [areaConstru, setAreaConstru] = useState(0);
-  const [dirConstru, setDirConstru] = useState("");
-  const [pisosConstru, setPisosConstru] = useState(0);
-  const [tipoConstru, setTipoConstru] = useState("");
+  const [aguaCerca, setAguaCerca] = useState(true);
+  const [areacTerreno, setAreacTerreno] = useState(0);
+  const [construidoTerreno, setConstruidoTerreno] = useState(true);
+  const [regimenTerreno, setRegimenTerreno] = useState("URBANO");
+  const [valorTerreno, setValorTerreno] = useState(0);
 
-  //   Query para editar (mutar)
-  const [editConstruMutate, { dataEdit, loadingEdit, errorEdit }] =
-    useMutation(EDIT_CONSTRU);
+  //Query para editar (mutar)
+  const [editTerrenoMutate, { dataEdit, loadingEdit, errorEdit }] =
+    useMutation(EDIT_TERRENO);
 
   //Genera los resultados del query de busqueda de predio por ID
-  console.log("valores edit constru", valoresEdit.idConstruccion);
-  const { data, error, loading } = useQuery(FIND_PREDIO, {
-    variables: { idConstru: parseInt(valoresEdit.idConstruccion) },
+
+  const { data, error, loading } = useQuery(FIND_TERRENO, {
+    variables: { id: parseInt(valoresEdit.idTerreno) },
   });
 
   useEffect(() => {
-    if (data && data.predioById) {
-      setAreaConstru(datdata.construccionById.areaca);
-      setDirConstru(data.construccionById.dir);
-      setPisosConstru(data.construccionById.pisos);
-      setTipoConstru(data.construccionById.tipo);
+    if (data && data.terrenoById) {
+      console.log("daaaaaaaa", data);
+      setAguaCerca(data.terrenoById.aguacerca);
+      setAreacTerreno(data.terrenoById.areac);
+      setConstruidoTerreno(data.terrenoById.construido);
+      setRegimenTerreno(data.terrenoById.regimen);
+      setValorTerreno(data.terrenoById.valor);
     }
   }, [data]);
 
@@ -48,25 +56,27 @@ const EditarConstruccion = () => {
   if (error) {
     return "error...";
   }
-  console.log("datos de entrada", data);
 
   const submitEdit = () => {
-    console.log("area", areaConstru);
-    console.log("direccion", dirConstru);
-    console.log("pisos", pisosConstru);
-    console.log("tipoCon", tipoConstru);
-    console.log("ID: ", valoresEdit.idConstruccion);
-
-    editConstruMutate({
+    editTerrenoMutate({
       variables: {
-        idconstru: parseInt(valoresEdit.idConstruccion),
-        area: parseInt(areaConstru),
-        pisos: parseInt(pisosConstru),
-        dir: dirConstru,
-        tipo: tipoConstru,
+        id: parseInt(valoresEdit.idTerreno),
+        aguacerca: aguaCerca,
+        areac: parseInt(areacTerreno),
+        construido: construidoTerreno,
+        regimen: regimenTerreno,
+        valor: parseInt(valorTerreno),
       },
-      refetchQueries: [{ query: ALL_PREDIO }],
+      refetchQueries: [
+        {
+          query: ALL_TERRENO,
+          variables: { id: parseInt(valoresEdit.idPredio) },
+        },
+      ],
     });
+    if (loading) {
+      return "loading";
+    }
     if (errorEdit) {
       window.alert("Error Actualizando Datos");
     } else {
@@ -75,62 +85,95 @@ const EditarConstruccion = () => {
     if (loadingEdit) {
       return "Loading";
     }
-    dispatch(toogleEditarConstruccion());
+    dispatch(toogleEditarTerreno());
   };
 
+  console.log("datos de entrada", data.terrenoById);
   return (
     <div className={` ${styles.popContainer} `}>
       <div>
         {" "}
         <h3>
-          <b>Editar construccion numero : {valoresEdit.idConstruccion} </b>
+          <b>Editar terreno numero : {valoresEdit.idTerreno} </b>
         </h3>
       </div>
+
       <div className={` ${styles.inputLine} `}>
         <label>
           {" "}
-          <b>Area(m2): {valoresEdit.nombre} </b>{" "}
+          <b>Construido :</b>{" "}
+        </label>
+        <select
+          defaultValue={data.terrenoById.construido}
+          onChange={(e) => {
+            if (toString(e.target.value) == "true") {
+              setConstruidoTerreno(true);
+            } else {
+              setConstruidoTerreno(false);
+            }
+          }}
+        >
+          <option value="true">SI</option>
+          <option value="false">NO</option>
+        </select>
+      </div>
+      <div className={` ${styles.inputLine} `}>
+        <label>
+          {" "}
+          <b>Area Construida (m2):</b>{" "}
         </label>
         <input
-          defaultValue={data.construccionById.areac}
-          name="area"
-          onChange={(e) => setAreaConstru(e.target.value)}
+          defaultValue={data.terrenoById.areac}
+          onChange={(e) => {
+            setAreacTerreno(e.target.value);
+          }}
           type="number"
         />
       </div>
       <div className={` ${styles.inputLine} `}>
         <label>
           {" "}
-          <b>Direccion:</b>{" "}
+          <b>Agua Cerca:</b>{" "}
         </label>
-        <input
-          defaultValue={data.construccionById.dir}
-          name="direccion"
-          onChange={(e) => setDirConstru(e.target.value)}
-          type="text"
-        />
+        <select
+          defaultValue={data.terrenoById.aguacerca}
+          onChange={(e) => {
+            if (toString(e.target.value) == "true") {
+              setAguaCerca(true);
+            } else {
+              setAguaCerca(false);
+            }
+          }}
+        >
+          <option value="true">SI</option>
+          <option value="false">NO</option>
+        </select>
       </div>
       <div className={` ${styles.inputLine} `}>
         <label>
-          <b>Pisos:</b>{" "}
+          <b>Urbanidad:</b>{" "}
         </label>
-        <input
-          defaultValue={data.construccionById.pisos}
-          name="departamento"
-          onChange={(e) => setPisosConstru(e.target.value)}
-          type="number"
-        />
+        <select
+          defaultValue={data.terrenoById.regimen}
+          onChange={(e) => {
+            setRegimenTerreno(e.target.value);
+          }}
+        >
+          <option value="URBANO">Urbano</option>
+          <option value="RURAL">Rural</option>
+        </select>
       </div>
       <div className={` ${styles.inputLine} `}>
         <label>
           {" "}
-          <b>Tipo:</b>{" "}
+          <b>Valor(COP):</b>{" "}
         </label>
         <input
-          defaultValue={data.construccionById.tipo}
-          name="municipio"
-          onChange={(e) => setTipoConstru(e.target.value)}
-          type="text"
+          defaultValue={data.terrenoById.valor}
+          onChange={(e) => {
+            setValorTerreno(e.target.value);
+          }}
+          tyoe="number"
         />
       </div>
 
@@ -142,7 +185,7 @@ const EditarConstruccion = () => {
           Guardar Cambios
         </div>
         <div
-          onClick={() => dispatch(toogleEditarConstruccion())}
+          onClick={() => dispatch(toogleEditarTerreno())}
           className={`btn btn-danger border `}
         >
           Cancelar
@@ -152,4 +195,4 @@ const EditarConstruccion = () => {
   );
 };
 
-export default EditarConstruccion;
+export default EditarTerreno;

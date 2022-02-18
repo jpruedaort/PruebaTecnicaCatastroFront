@@ -5,7 +5,6 @@ import { useMutation } from "@apollo/client";
 import { useDispatch, useSelector } from "react-redux";
 import { toogleEditar } from "../../../redux/slices/stateSlice";
 import { changeVal } from "../../../redux/slices/predioValSlice";
-import { changeValTerreno } from "../../../redux/slices/construccionValSlice";
 import { toogleViewConstruccion } from "../../../redux/slices/stateSlice";
 import { toogleViewTerreno } from "../../../redux/slices/stateSlice";
 
@@ -17,11 +16,8 @@ const PredioList = () => {
   const { data, loading, error } = useQuery(ALL_PREDIO);
 
   //Generar funcion para mutacion de GraphQl Borrar Registro de Predio ( ON DELETE CASCADE)
-
   const [deletePredioMutate, { dataDel, loadingDel, errorDel }] =
     useMutation(DELETE_PREDIO);
-
-  // onClick Event que recauda
 
   //onClick Event para borrar Predio
   const deletePredioReg = (e) => {
@@ -39,32 +35,30 @@ const PredioList = () => {
   };
 
   //onClick event para abrir ventana Editar
-
   const openEditWin = (e) => {
     dispatch(changeVal(e.target.id));
     dispatch(toogleEditar());
   };
 
-  //on Click abrir ventana de construccion
-
+  //onClick abrir ventana de construccion
   const openConstruccion = (e) => {
     console.log("idselect:", e.target.id);
     dispatch(changeVal(e.target.id));
     dispatch(toogleViewConstruccion());
   };
 
-  //Abrir ventana de terreno
+  //onClick Abrir ventana de terreno
   const openTerreno = (e) => {
-    dispatch(changeValTerreno(e.target.id));
+    dispatch(changeVal(e.target.id));
     dispatch(toogleViewTerreno());
   };
 
   if (loading) {
-    return <h1>Loading</h1>;
+    return <h1>Cargando Ventana de Terreno</h1>;
   }
 
   if (error) {
-    return <h1>Error</h1>;
+    return <h1>Error Cargando Ventana de Terreno</h1>;
   }
 
   return (

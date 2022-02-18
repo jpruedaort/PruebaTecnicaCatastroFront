@@ -1,58 +1,58 @@
 import { useMutation, useQuery } from "@apollo/client";
 import styles from "../../../styles/Home.module.css";
 import { useDispatch, useSelector } from "react-redux";
-import EditarConstruccion from "./editarConstruccion";
 import { changeValConstru } from "../../../redux/slices/construccionValSlice";
-
+import { ALL_TERRENO, DELETE_TERRENO } from "../../../graphql/queries";
 import {
-  ALL_CONSTRU,
-  ALL_TERRENO,
-  DELETE_CONSTRU,
-} from "../../../graphql/queries";
-import {
-  toogleConstruccion,
-  toogleViewConstruccion,
-  toogleEditarConstruccion,
+  toogleCreateTerreno,
+  toogleViewTerreno,
+  toogleEditarTerreno,
 } from "../../../redux/slices/stateSlice";
-import AddConstru from "./addConstru";
+import AddTerreno from "./addTerreno";
+import EditarTerreno from "./editarTerreno";
+import { changeTerrenoVal } from "../../../redux/slices/predioValSlice";
 
 const Terreno = () => {
   //dispatch
   const dispatch = useDispatch();
 
-  const addConstru = () => {
-    dispatch(toogleConstruccion());
+  //onClick para abrir ventana de terrenos
+  const addTerreno = () => {
+    dispatch(toogleCreateTerreno());
   };
 
-  const editarConstru = (e) => {
+  const editarTerreno = (e) => {
     console.log("e.target.id", e.target.id);
-    dispatch(changeValConstru(e.target.id));
-    dispatch(toogleEditarConstruccion());
+    dispatch(changeTerrenoVal(e.target.id));
+    dispatch(toogleEditarTerreno());
   };
 
-  //Traer estado para ventana de crear construccion
-  const addConstruState = useSelector(
-    (state) => state.stateELE.createConstruccion
+  //Traer estado para ventana de crear terreno
+  const createTerrenoState = useSelector(
+    (state) => state.stateELE.createTerreno
   );
 
-  //traer estado para ventana de edicion de construccion
-  const editConstState = useSelector(
-    (state) => state.stateELE.editarConstruccion
-  );
+  //traer estado para ventana de edicion de terreno
+  const editTerrenoState = useSelector((state) => state.stateELE.editTerrState);
 
   //Invocar Valores iniciales para la edicion
-  const valoresEdit = useSelector((state) => state.construccionValv);
+  const valoresEdit = useSelector((state) => state.predioVal);
 
-  //Genera los resultados del query de busqueda de predio por ID
-  console.log("Valores Edit", valoresEdit);
-  const valorInt = parseInt(valoresEdit.idTerreno);
-  const [eliminarConstruMutation, { dataElim, errorElim, loadingElim }] =
-    useMutation(DELETE_CONSTRU);
+  //Genera los resultados del query de busqueda de terreno por ID
 
-  const eliminarConstru = (e) => {
-    eliminarConstruMutation({
+  const valorInt = parseInt(valoresEdit.idPredio);
+  const [eliminarTerrenoMutation, { dataElim, errorElim, loadingElim }] =
+    useMutation(DELETE_TERRENO);
+
+  const eliminarTerreno = (e) => {
+    eliminarTerrenoMutation({
       variables: { id: parseInt(e.target.id) },
-      refetchQueries: [{ query: ALL_CONSTRU }],
+      refetchQueries: [
+        {
+          query: ALL_TERRENO,
+          variables: { id: parseInt(valoresEdit.idPredio) },
+        },
+      ],
     });
 
     if (loadingElim) {
@@ -65,73 +65,89 @@ const Terreno = () => {
       window.alert("Registro Eliminado Exitosamente");
     }
   };
-  const { data, error, loading } = useQuery(ALL_CONSTRU, {
-    variables: { idconstru: valorInt },
+
+  // Fetch todos las construcciones asociadas al ID_PREDIO
+
+  const { data, error, loading } = useQuery(ALL_TERRENO, {
+    variables: { id: valorInt },
   });
   if (loading) {
     return "loading...";
   }
   if (error) {
-    console.log("Error en la solicitud");
+    console.log("Error en la solicitud: ", error);
   }
 
-  //On Click event para agregar construccion
-
-  console.log("DATTATAA:, ", data.predioById.construccionsByPredioId.nodes);
-  const wholedata = data.predioById.construccionsByPredioId.nodes;
-
+  const wholedata = data.predioById.terrenosByPredioId.nodes;
+  console.log("Whole Data length . ", Object.keys(wholedata).length);
   return (
     <div className={` ${styles.popContainer} `}>
       <div>
         {" "}
         <h3>
-          <b>Construcciones en el Predio numero : {valoresEdit.idPredio} </b>
+          <b>Terreno en el predio numero : {valoresEdit.idPredio} </b>
         </h3>
       </div>
       <div className={`${styles.construRow} w-100 d-flex `}>
-        {wholedata.map((construItem) => (
-          <div key={construItem.id} className={`${styles.construCard} `}>
+        {wholedata.map((terrenoItem) => (
+          <div key={terrenoItem.id} className={`${styles.construCard} `}>
             <div className={` ${styles.lineDisplay} d-flex`}>
               <h5 className={`w-40 ${styles.lineText}`}>
                 <b>Id:</b>
               </h5>
-              <h5 className={`w-40 ${styles.lineText}`}>{construItem.id}</h5>
+              <h5 className={`w-40 ${styles.lineText}`}>{terrenoItem.id}</h5>
             </div>
             <div className={` ${styles.lineDisplay} d-flex`}>
               <h5 className={`w-40 ${styles.lineText}`}>
-                <b>Area(m2):</b>
+                <b>Construido:</b>
               </h5>
-              <h5 className={`w-40 ${styles.lineText}`}>{construItem.areac}</h5>
+              {terrenoItem.construido ? (
+                <h5 className={`w-40 ${styles.lineText}`}> SI </h5>
+              ) : (
+                <h5 className={`w-40 ${styles.lineText}`}> NO </h5>
+              )}
             </div>
             <div className={` ${styles.lineDisplay} d-flex`}>
               <h5 className={`w-40 ${styles.lineText}`}>
-                <b>Dirección:</b>
+                <b>Area Construida :</b>
               </h5>
-              <h5 className={`w-40 ${styles.lineText}`}>{construItem.dir}</h5>
+              <h5 className={`w-40 ${styles.lineText}`}>{terrenoItem.areac}</h5>
             </div>
             <div className={` ${styles.lineDisplay} d-flex`}>
               <h5 className={`w-40 ${styles.lineText}`}>
-                <b>Pisos:</b>
+                <b>Agua cerca:</b>
               </h5>
-              <h5 className={`w-40 ${styles.lineText}`}>{construItem.pisos}</h5>
+              {terrenoItem.aguacerca ? (
+                <h5 className={`w-40 ${styles.lineText}`}> SI </h5>
+              ) : (
+                <h5 className={`w-40 ${styles.lineText}`}> NO </h5>
+              )}
             </div>
             <div className={` ${styles.lineDisplay} d-flex`}>
               <h5 className={`w-40 ${styles.lineText}`}>
-                <b>Tipo:</b>
+                <b>Urbanidad: </b>
               </h5>
-              <h5 className={`w-40 ${styles.lineText}`}>{construItem.tipo}</h5>
+              <h5 className={`w-40 ${styles.lineText}`}>
+                {terrenoItem.regimen}
+              </h5>
+            </div>
+            <div className={` ${styles.lineDisplay} d-flex`}>
+              <h5 className={`w-40 ${styles.lineText}`}>
+                <b>Valor (COP): </b>
+              </h5>
+              <h5 className={`w-40 ${styles.lineText}`}>{terrenoItem.valor}</h5>
             </div>
             <div className={` ${styles.lineDisplay} d-flex`}>
               <div
-                id={construItem.id}
-                onClick={(e) => editarConstru(e)}
+                id={terrenoItem.id}
+                onClick={(e) => editarTerreno(e)}
                 className={`btn ${styles.lineBtn} btn-success`}
               >
                 Editar
               </div>
               <div
-                id={construItem.id}
-                onClick={(e) => eliminarConstru(e)}
+                id={terrenoItem.id}
+                onClick={(e) => eliminarTerreno(e)}
                 className={`btn ${styles.lineBtn} btn-danger`}
               >
                 Eliminar
@@ -139,27 +155,30 @@ const Terreno = () => {
             </div>
           </div>
         ))}
-        <div
-          onClick={(e) => addConstru(e)}
-          className={`${styles.construCard}  `}
-        >
+        {Object.keys(wholedata).length == 0 && (
           <div
-            className={`w-100 h-100  d-flex justify-content-center align-items-center`}
+            onClick={(e) => addTerreno(e)}
+            className={`${styles.construCard}  `}
           >
-            <h4>+ </h4>
-            <h4> Agregar Construccion</h4>
+            <div
+              className={`w-100 h-100  d-flex justify-content-center align-items-center`}
+            >
+              <h4>+ </h4>
+
+              <h4> Agregar Terreno </h4>
+            </div>
           </div>
-        </div>
+        )}
       </div>
       <div
-        onClick={() => dispatch(toogleViewConstruccion())}
-        className={`btn bg-danger`}
+        onClick={() => dispatch(toogleViewTerreno())}
+        className={`btn bg-danger mt-3`}
       >
         Cancelar
       </div>
-      {editConstState && <EditarConstruccion />}
+      {editTerrenoState && <EditarTerreno />}
 
-      {addConstruState && <AddConstru />}
+      {createTerrenoState && <AddTerreno />}
     </div>
   );
 };

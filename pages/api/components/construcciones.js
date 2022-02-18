@@ -2,7 +2,7 @@ import { useMutation, useQuery } from "@apollo/client";
 import styles from "../../../styles/Home.module.css";
 import { useDispatch, useSelector } from "react-redux";
 import EditarConstruccion from "./editarConstruccion";
-import { changeValConstru } from "../../../redux/slices/construccionValSlice";
+import { changeConstruVal } from "../../../redux/slices/predioValSlice";
 
 import {
   ALL_CONSTRU,
@@ -20,13 +20,15 @@ const Construccion = () => {
   //dispatch
   const dispatch = useDispatch();
 
+  // Abrir ventana para agregar cosntruccion
   const addConstru = () => {
     dispatch(toogleConstruccion());
   };
 
+  // Abrir ventana de edicion de cosntruccion
   const editarConstru = (e) => {
     console.log("e.target.id", e.target.id);
-    dispatch(changeValConstru(e.target.id));
+    dispatch(changeConstruVal(e.target.id));
     dispatch(toogleEditarConstruccion());
   };
 
@@ -43,16 +45,22 @@ const Construccion = () => {
   //Invocar Valores iniciales para la edicion
   const valoresEdit = useSelector((state) => state.predioVal);
 
-  //Genera los resultados del query de busqueda de predio por ID
+  //Genera los resultados del query de busqueda de construccion por ID
 
   const valorInt = parseInt(valoresEdit.idPredio);
   const [eliminarConstruMutation, { dataElim, errorElim, loadingElim }] =
     useMutation(DELETE_CONSTRU);
 
+  //Para eliminar Construccion
   const eliminarConstru = (e) => {
     eliminarConstruMutation({
       variables: { id: parseInt(e.target.id) },
-      refetchQueries: [{ query: ALL_CONSTRU }],
+      refetchQueries: [
+        {
+          query: ALL_CONSTRU,
+          variables: { idconstru: parseInt(valoresEdit.idPredio) },
+        },
+      ],
     });
 
     if (loadingElim) {
@@ -65,6 +73,8 @@ const Construccion = () => {
       window.alert("Registro Eliminado Exitosamente");
     }
   };
+
+  // Fetch todos las construcciones asociadas al ID_PREDIO
   const { data, error, loading } = useQuery(ALL_CONSTRU, {
     variables: { idconstru: valorInt },
   });
@@ -74,10 +84,6 @@ const Construccion = () => {
   if (error) {
     console.log("Error en la solicitud");
   }
-
-  //On Click event para agregar construccion
-
-  console.log("DATTATAA:, ", data.predioById.construccionsByPredioId.nodes);
   const wholedata = data.predioById.construccionsByPredioId.nodes;
 
   return (
@@ -153,7 +159,7 @@ const Construccion = () => {
       </div>
       <div
         onClick={() => dispatch(toogleViewConstruccion())}
-        className={`btn bg-danger`}
+        className={`btn bg-danger mt-3`}
       >
         Cancelar
       </div>

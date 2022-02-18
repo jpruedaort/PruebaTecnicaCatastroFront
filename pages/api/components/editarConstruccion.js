@@ -1,12 +1,10 @@
 import { useQuery } from "@apollo/client";
 import styles from "../../../styles/Home.module.css";
-import { FIND_PREDIO } from "../../../graphql/queries";
+import { ALL_CONSTRU, FIND_CONSTRU } from "../../../graphql/queries";
 import { useDispatch, useSelector } from "react-redux";
 import { ALL_PREDIO } from "../../../graphql/queries";
-import { toogleEditar } from "../../../redux/slices/stateSlice";
 import { useEffect, useState } from "react";
 import { useMutation } from "@apollo/client";
-import { EDIT_PREDIO } from "../../../graphql/queries";
 import { toogleEditarConstruccion } from "../../../redux/slices/stateSlice";
 import { EDIT_CONSTRU } from "../../../graphql/queries";
 
@@ -15,7 +13,7 @@ const EditarConstruccion = () => {
   const dispatch = useDispatch();
 
   //Invocar Valores iniciales para la edicion
-  const valoresEdit = useSelector((state) => state.construccionVal);
+  const valoresEdit = useSelector((state) => state.predioVal);
 
   //Estados de la Construccion
   const [areaConstru, setAreaConstru] = useState(0);
@@ -27,15 +25,14 @@ const EditarConstruccion = () => {
   const [editConstruMutate, { dataEdit, loadingEdit, errorEdit }] =
     useMutation(EDIT_CONSTRU);
 
-  //Genera los resultados del query de busqueda de predio por ID
-  console.log("valores edit constru", valoresEdit.idConstruccion);
-  const { data, error, loading } = useQuery(FIND_PREDIO, {
-    variables: { idConstru: parseInt(valoresEdit.idConstruccion) },
+  //Genera los resultados del query de busqueda de construccion por ID
+  const { data, error, loading } = useQuery(FIND_CONSTRU, {
+    variables: { id: parseInt(valoresEdit.idconstru) },
   });
 
   useEffect(() => {
-    if (data && data.predioById) {
-      setAreaConstru(datdata.construccionById.areaca);
+    if (data && data.construccionById) {
+      setAreaConstru(data.construccionById.areac);
       setDirConstru(data.construccionById.dir);
       setPisosConstru(data.construccionById.pisos);
       setTipoConstru(data.construccionById.tipo);
@@ -48,24 +45,24 @@ const EditarConstruccion = () => {
   if (error) {
     return "error...";
   }
-  console.log("datos de entrada", data);
+
+  console.log("DATA, ", data);
 
   const submitEdit = () => {
-    console.log("area", areaConstru);
-    console.log("direccion", dirConstru);
-    console.log("pisos", pisosConstru);
-    console.log("tipoCon", tipoConstru);
-    console.log("ID: ", valoresEdit.idConstruccion);
-
     editConstruMutate({
       variables: {
-        idconstru: parseInt(valoresEdit.idConstruccion),
+        idconstru: parseInt(valoresEdit.idconstru),
         area: parseInt(areaConstru),
         pisos: parseInt(pisosConstru),
         dir: dirConstru,
         tipo: tipoConstru,
       },
-      refetchQueries: [{ query: ALL_PREDIO }],
+      refetchQueries: [
+        {
+          query: ALL_CONSTRU,
+          variables: { idconstru: parseInt(valoresEdit.idPredio) },
+        },
+      ],
     });
     if (errorEdit) {
       window.alert("Error Actualizando Datos");

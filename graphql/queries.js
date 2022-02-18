@@ -49,15 +49,13 @@ export const DELETE_PREDIO = gql`
 `;
 
 export const FIND_PREDIO = gql`
-  query MyQuery($idConstru: Int!) {
-    construccionById(id: $idConstru) {
-      areac
-      dir
+  query MyQuery($idPred: Int!) {
+    predioById(id: $idPred) {
+      nombre
+      municipio
       id
-      nodeId
-      pisos
-      predioId
-      tipo
+      departamento
+      avaluo
     }
   }
 `;
@@ -88,39 +86,6 @@ export const EDIT_PREDIO = gql`
         id
         municipio
         nombre
-      }
-    }
-  }
-`;
-
-export const ALL_TERRENO = gql`
-  query MyQuery($predioid: Int!) {
-    allTerrenos(condition: { predioId: $predioid }) {
-      nodes {
-        aguacerca
-        areac
-        construido
-        id
-        predioId
-        regimen
-        valor
-      }
-    }
-  }
-`;
-
-export const ALL_CONSTRU = gql`
-  query MyQuery($idconstru: Int!) {
-    predioById(id: $idconstru) {
-      construccionsByPredioId {
-        nodes {
-          areac
-          dir
-          id
-          pisos
-          predioId
-          tipo
-        }
       }
     }
   }
@@ -190,6 +155,119 @@ export const EDIT_CONSTRU = gql`
           tipo: $tipo
         }
         id: $idconstru
+      }
+    ) {
+      clientMutationId
+    }
+  }
+`;
+
+export const ALL_CONSTRU = gql`
+  query MyQuery($idconstru: Int!) {
+    predioById(id: $idconstru) {
+      construccionsByPredioId {
+        nodes {
+          areac
+          dir
+          id
+          pisos
+          predioId
+          tipo
+        }
+      }
+    }
+  }
+`;
+
+export const ALL_TERRENO = gql`
+  query MyQuery($id: Int!) {
+    predioById(id: $id) {
+      terrenosByPredioId {
+        nodes {
+          aguacerca
+          areac
+          construido
+          id
+          nodeId
+          predioId
+          regimen
+          valor
+        }
+      }
+    }
+  }
+`;
+
+export const ADD_TERRENO = gql`
+  mutation MyMutation(
+    $id: Int!
+    $areac: Int!
+    $valor: Int!
+    $aguacerca: Boolean!
+    $regimen: TerrenoRegimen!
+    $construida: Boolean!
+    $predioId: Int!
+  ) {
+    createTerreno(
+      input: {
+        terreno: {
+          id: $id
+          areac: $areac
+          valor: $valor
+          aguacerca: $aguacerca
+          regimen: $regimen
+          construido: $construida
+          predioId: $predioId
+        }
+      }
+    ) {
+      clientMutationId
+    }
+  }
+`;
+
+export const DELETE_TERRENO = gql`
+  mutation MyMutation($id: Int!) {
+    deleteTerrenoById(input: { id: $id }) {
+      clientMutationId
+      deletedTerrenoId
+    }
+  }
+`;
+
+export const FIND_TERRENO = gql`
+  query MyQuery($id: Int!) {
+    terrenoById(id: $id) {
+      aguacerca
+      areac
+      construido
+      id
+      predioId
+      regimen
+      valor
+    }
+  }
+`;
+
+export const EDIT_TERRENO = gql`
+  mutation MyMutation(
+    $id: Int!
+    $aguacerca: Boolean!
+    $areac: Int!
+    $construido: Boolean!
+    $regimen: TerrenoRegimen!
+    $valor: Int!
+  ) {
+    updateTerrenoById(
+      input: {
+        terrenoPatch: {
+          aguacerca: $aguacerca
+          areac: $areac
+          construido: $construido
+          regimen: $regimen
+          valor: $valor
+        }
+        id: $id
       }
     ) {
       clientMutationId

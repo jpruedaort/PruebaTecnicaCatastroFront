@@ -9,10 +9,10 @@ import { useMutation } from "@apollo/client";
 import { EDIT_PREDIO } from "../../../graphql/queries";
 
 const EditarPredio = () => {
-  //dispatch
+  //dispatch(Redux)
   const dispatch = useDispatch();
 
-  //Invocar Valores iniciales para la edicion
+  //Invocar ID del predio Seleccionado
   const valoresEdit = useSelector((state) => state.predioVal);
 
   //Estados del predio
@@ -26,7 +26,6 @@ const EditarPredio = () => {
     useMutation(EDIT_PREDIO);
 
   //Genera los resultados del query de busqueda de predio por ID
-
   const valorInt = parseInt(valoresEdit.idPredio);
   const { data, error, loading } = useQuery(FIND_PREDIO, {
     variables: { idPred: valorInt },
@@ -49,12 +48,6 @@ const EditarPredio = () => {
   }
 
   const submitEdit = () => {
-    console.log("avaluo", avaluoPredio);
-    console.log("nombre", nombrePredio);
-    console.log("departamento", departPredio);
-    console.log("Municipio", municipioPredio);
-    console.log("ID: ", valorInt);
-
     editPredioMutate({
       variables: {
         id: parseInt(valorInt),
@@ -110,6 +103,7 @@ const EditarPredio = () => {
             setAvaluoPredio(e.target.value);
           }}
           type="number"
+          min="0"
         />
       </div>
       <div className={` ${styles.inputLine} `}>

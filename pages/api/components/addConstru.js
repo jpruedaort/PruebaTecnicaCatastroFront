@@ -35,7 +35,7 @@ const AddConstru = () => {
     console.log("tipo", tipoConstru);
     console.log("idPredio", valoresEdit.idPredio);
 
-    //Ejecutar mutatuon para agregar construccion
+    //Ejecutar mutation para agregar construccion
     addConstruMutate({
       variables: {
         idConstru: parseInt(idConstru),
@@ -45,11 +45,18 @@ const AddConstru = () => {
         predioID: parseInt(valoresEdit.idPredio),
         tipoConstru: tipoConstru,
       },
-      refetchQueries: [{ query: ALL_CONSTRU }],
+      refetchQueries: [
+        {
+          query: ALL_CONSTRU,
+          variables: {
+            idconstru: parseInt(valoresEdit.idPredio),
+          },
+        },
+      ],
     });
 
     if (!error) {
-      window.alert(error);
+      window.alert("Construccíon agregada Correctamente");
     } else {
       window.alert("Error Agregando Construccion, intente de nuevo");
     }
