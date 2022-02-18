@@ -274,3 +274,37 @@ export const EDIT_TERRENO = gql`
     }
   }
 `;
+
+export const ADD_PROP = gql`
+  mutation MyMutation(
+    $apellido: String!
+    $correo: String!
+    $direccion: String!
+    $id: Int!
+    $nit: Int!
+    $nombre: String!
+    $numdoc: Int!
+    $razonsoc: String!
+    $telefono: Float!
+    $tipo: PropietarioTipo!
+  ) {
+    createPropietario(
+      input: {
+        propietario: {
+          id: $id
+          tipo: $tipo
+          direccion: $direccion
+          telefono: $telefono
+          razonsoc: $razonsoc
+          numdoc: $numdoc
+          nombre: $nombre
+          nit: $nit
+          correo: $correo
+          apellido: $apellido
+        }
+      }
+    ) {
+      clientMutationId
+    }
+  }
+`;
